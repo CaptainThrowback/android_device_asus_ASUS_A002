@@ -1,0 +1,70 @@
+on charger
+    write /sys/class/android_usb/android0/boot_lock 0
+    write /sys/class/android_usb/android0/enable 1
+
+on fs
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/idVendor 0B05
+    write /sys/class/android_usb/android0/idProduct 7770
+    write /sys/class/android_usb/android0/f_ffs/aliases adb
+    # ASUS_BSP Jeremy: Enable function store in recovery mode
+    write /sys/class/android_usb/android0/boot_lock 0
+    write /sys/class/android_usb/android0/functions adb
+    write /sys/class/android_usb/android0/iManufacturer ${ro.product.manufacturer}
+    write /sys/class/android_usb/android0/iProduct ${ro.product.model}
+    write /sys/class/android_usb/android0/iSerial ${ro.serialno}	
+	
+#
+on property:sys.usb.config=adb
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/idVendor 0B05
+    write /sys/class/android_usb/android0/idProduct 7770
+    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+    write /sys/class/android_usb/android0/enable 1
+    start adbd
+    setprop sys.usb.state ${sys.usb.config}
+
+on property:sys.usb.config=mtp,adb
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/idVendor 0B05
+    write /sys/class/android_usb/android0/idProduct 7773
+    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+    write /sys/class/android_usb/android0/enable 1
+    start adbd
+    setprop sys.usb.state ${sys.usb.config}
+
+on property:sys.usb.config=adb,mass_storage
+    write /sys/class/android_usb/android0/enable 0
+    write /sys/class/android_usb/android0/idVendor 0B05
+    write /sys/class/android_usb/android0/idProduct 4DAE
+    write /sys/class/android_usb/android0/functions ${sys.usb.config}
+    write /sys/class/android_usb/android0/enable 1
+    start adbd    
+    setprop sys.usb.state ${sys.usb.config}
+
+on property:sys.usb.fastboot=1
+    write /sys/class/android_usb/android0/enable 0
+
+on property:sys.usb.fastboot=0
+    write /sys/class/android_usb/android0/enable 1
+
+#ASUS_BSP+++ Landice "[ZE500KL][USBH][NA][Spec] Enable manual mode switching"
+on property:persist.sys.usb.otg.mode=host
+    setprop sys.usb.otg.mode host
+
+on property:persist.sys.usb.otg.mode=peripheral
+    setprop sys.usb.otg.mode peripheral
+
+on property:persist.sys.usb.otg.mode=auto
+    setprop sys.usb.otg.mode auto
+
+on property:sys.usb.otg.mode=host
+    write /proc/msm_otg/mode host
+
+on property:sys.usb.otg.mode=peripheral
+    write /proc/msm_otg/mode peripheral
+
+on property:sys.usb.otg.mode=auto
+    write /proc/msm_otg/mode auto
+#ASUS_BSP--- Landice "[ZE500KL][USBH][NA][Spec] Enable manual mode switching"
+

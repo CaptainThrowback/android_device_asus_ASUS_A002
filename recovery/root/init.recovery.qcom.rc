@@ -1,0 +1,4 @@
+on boot
+    # Tuxera NTFS and exFAT modules
+    insmod /system/lib/modules/tntfs.ko
+    insmod /system/lib/modules/texfat.ko
